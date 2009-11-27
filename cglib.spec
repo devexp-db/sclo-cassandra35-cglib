@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        2.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0
 Group:          Development/Tools
@@ -16,6 +16,7 @@ BuildRequires:  ant
 BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  java-devel >= 0:1.6.0
 BuildRequires:  objectweb-asm
+BuildRequires:  unzip
 BuildArch:      noarch
 Requires(post): jpackage-utils
 Requires(postun): jpackage-utils
@@ -71,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadocdir}/%{name}-%{version}
 
 %changelog
+* Fri Nov 27 2009 Lubomir Rintel <lkundrak@v3.sk> - 2.2-6
+- BR unzip to fix openSUSE build
+
 * Tue Dec  9 2008 Mary Ellen Foster <mefoster at gmail.com> - 2.2-5
 - Add dist to version
 - Fix BuildRoot to follow the latest guidelines
