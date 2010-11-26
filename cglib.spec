@@ -1,11 +1,12 @@
 Name:           cglib
 Version:        2.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0
 Group:          Development/Tools
 Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
+Source1:        http://mirrors.ibiblio.org/pub/mirrors/maven2/%{name}/%{name}/%{version}/%{name}-%{version}.pom
 # Remove the repackaging step that includes other jars into the final thing
 Patch0:         %{name}-build_xml.patch
 
@@ -50,6 +51,9 @@ cp -r docs ${RPM_BUILD_ROOT}%{_javadocdir}/%{name}-%{version}
 mkdir -p $RPM_BUILD_ROOT%{_javadir}
 cp -p dist/%{name}-%{version}.jar  $RPM_BUILD_ROOT%{_javadir}
 ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
+
+mkdir -p $RPM_BUILD_ROOT%{_mavenpomdir}
+cp %{SOURCE1} $RPM_BUILD_ROOT%{_mavenpomdir}/JPP-%{name}.pom
 %add_to_maven_depmap net.sf.cglib %{name} %{version} JPP %{name}
 
 %clean
@@ -65,6 +69,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc LICENSE NOTICE
 %{_javadir}/*.jar
+%{_mavenpomdir}/*
 %config(noreplace) %{_mavendepmapfragdir}/%{name}
 
 %files javadoc
@@ -72,6 +77,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadocdir}/%{name}-%{version}
 
 %changelog
+* Fri Nov 26 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 2.2-7
+- Add missing pom file (Resolves rhbz#655793)
+
 * Fri Nov 27 2009 Lubomir Rintel <lkundrak@v3.sk> - 2.2-6
 - BR unzip to fix openSUSE build
 
