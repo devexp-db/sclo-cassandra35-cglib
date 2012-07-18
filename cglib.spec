@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        2.2
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0
 Group:          Development/Tools
@@ -77,6 +77,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadocdir}/%{name}-%{version}
 
 %changelog
+* Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
