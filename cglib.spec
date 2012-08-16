@@ -1,8 +1,8 @@
 Name:           cglib
 Version:        2.2
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Code Generation Library for Java
-License:        ASL 2.0
+License:        ASL 2.0 and BSD
 Group:          Development/Tools
 Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
@@ -19,10 +19,6 @@ BuildRequires:  java-devel >= 0:1.6.0
 BuildRequires:  objectweb-asm
 BuildRequires:  unzip
 BuildArch:      noarch
-Requires(post): jpackage-utils
-Requires(postun): jpackage-utils
-
-BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 %description
 cglib is a powerful, high performance and quality code generation library 
@@ -45,38 +41,35 @@ export CLASSPATH=`build-classpath objectweb-asm`
 ant jar javadoc
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_javadocdir}/
-cp -r docs ${RPM_BUILD_ROOT}%{_javadocdir}/%{name}-%{version}
-mkdir -p $RPM_BUILD_ROOT%{_javadir}
-cp -p dist/%{name}-%{version}.jar  $RPM_BUILD_ROOT%{_javadir}
-ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
+install -d -m 755 %{buildroot}%{_javadir}
+install -d -m 755 %{buildroot}%{_mavenpomdir}
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
 
-mkdir -p $RPM_BUILD_ROOT%{_mavenpomdir}
-cp %{SOURCE1} $RPM_BUILD_ROOT%{_mavenpomdir}/JPP-%{name}.pom
-%add_to_maven_depmap net.sf.cglib %{name} %{version} JPP %{name}
+install -p -m 644 dist/%{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
+install -p -m 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
+%add_maven_depmap
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
-%post
-%update_maven_depmap
-
-%postun
-%update_maven_depmap
 
 %files
-%defattr(-,root,root,-)
 %doc LICENSE NOTICE
-%{_javadir}/*.jar
-%{_mavenpomdir}/*
-%config(noreplace) %{_mavendepmapfragdir}/%{name}
+%{_javadir}/%{name}.jar
+%{_mavenpomdir}/JPP-%{name}.pom
+%{_mavendepmapfragdir}/%{name}
 
 %files javadoc
-%defattr(-,root,root,-)
-%{_javadocdir}/%{name}-%{version}
+%doc LICENSE NOTICE
+%{_javadocdir}/%{name}
 
 %changelog
+* Thu Aug 16 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-11
+- Fix license tag
+- Install LICENSE and NOTICE with javadoc package
+- Convert versioned JARs to unversioned
+- Preserve timestamp of POM file
+- Update to current packaging guidelines
+
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
