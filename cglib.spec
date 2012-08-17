@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        2.2
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -47,7 +47,7 @@ install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
 
 install -p -m 644 dist/%{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
 install -p -m 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap
+%add_maven_depmap -a net.sf.cglib:cglib
 
 cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
@@ -63,6 +63,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Fri Aug 17 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-12
+- Add additional depmap
+
 * Thu Aug 16 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-11
 - Fix license tag
 - Install LICENSE and NOTICE with javadoc package
