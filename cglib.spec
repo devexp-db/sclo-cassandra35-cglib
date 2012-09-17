@@ -1,12 +1,13 @@
 Name:           cglib
 Version:        2.2
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0
 Group:          Development/Tools
 Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
 Source1:        http://mirrors.ibiblio.org/pub/mirrors/maven2/%{name}/%{name}/%{version}/%{name}-%{version}.pom
+Source2:        bnd.properties
 # Remove the repackaging step that includes other jars into the final thing
 Patch0:         %{name}-build_xml.patch
 
@@ -18,6 +19,7 @@ BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  java-devel >= 0:1.6.0
 BuildRequires:  objectweb-asm
 BuildRequires:  unzip
+BuildRequires:  aqute-bnd
 BuildArch:      noarch
 Requires(post): jpackage-utils
 Requires(postun): jpackage-utils
@@ -43,21 +45,23 @@ rm lib/*.jar
 %build
 export CLASSPATH=`build-classpath objectweb-asm`
 ant jar javadoc
+# Convert to OSGi bundle
+pushd dist
+java -Dcglib.bundle.version="%{version}" \
+  -jar $(build-classpath aqute-bnd) wrap -output %{name}-%{version}.bar -properties %{SOURCE2} %{name}-%{version}.jar
+popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p ${RPM_BUILD_ROOT}%{_javadocdir}/
 cp -r docs ${RPM_BUILD_ROOT}%{_javadocdir}/%{name}-%{version}
 mkdir -p $RPM_BUILD_ROOT%{_javadir}
-cp -p dist/%{name}-%{version}.jar  $RPM_BUILD_ROOT%{_javadir}
+cp -p dist/%{name}-%{version}.bar  $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
 ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
 
 mkdir -p $RPM_BUILD_ROOT%{_mavenpomdir}
 cp %{SOURCE1} $RPM_BUILD_ROOT%{_mavenpomdir}/JPP-%{name}.pom
 %add_to_maven_depmap net.sf.cglib %{name} %{version} JPP %{name}
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 %update_maven_depmap
@@ -77,6 +81,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_javadocdir}/%{name}-%{version}
 
 %changelog
+* Tue Aug 14 2012 Severin Gehwolf <sgehwolf@redhat.com> 2.2-11
+- Use aqute bnd in order to generate OSGi metadata.
+
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
