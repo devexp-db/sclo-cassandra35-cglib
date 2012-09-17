@@ -1,8 +1,8 @@
 Name:           cglib
 Version:        2.2
-Release:        11%{?dist}
+Release:        13%{?dist}
 Summary:        Code Generation Library for Java
-License:        ASL 2.0
+License:        ASL 2.0 and BSD
 Group:          Development/Tools
 Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
@@ -21,10 +21,6 @@ BuildRequires:  objectweb-asm
 BuildRequires:  unzip
 BuildRequires:  aqute-bnd
 BuildArch:      noarch
-Requires(post): jpackage-utils
-Requires(postun): jpackage-utils
-
-BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 %description
 cglib is a powerful, high performance and quality code generation library 
@@ -52,37 +48,42 @@ java -Dcglib.bundle.version="%{version}" \
 popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p ${RPM_BUILD_ROOT}%{_javadocdir}/
-cp -r docs ${RPM_BUILD_ROOT}%{_javadocdir}/%{name}-%{version}
-mkdir -p $RPM_BUILD_ROOT%{_javadir}
-cp -p dist/%{name}-%{version}.bar  $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
-ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
-
-mkdir -p $RPM_BUILD_ROOT%{_mavenpomdir}
-cp %{SOURCE1} $RPM_BUILD_ROOT%{_mavenpomdir}/JPP-%{name}.pom
+install -d -m 755 %{buildroot}%{_javadir}
+install -d -m 755 %{buildroot}%{_mavenpomdir}
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
+mkdir -p %{buildroot}%{_mavenpomdir}
+cp %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 %add_to_maven_depmap net.sf.cglib %{name} %{version} JPP %{name}
+# yes, this is really *.bar - aqute bnd created it
+install -p -m 644 dist/%{name}-%{version}.bar %{buildroot}%{_javadir}/%{name}.jar
+install -p -m 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
+%add_maven_depmap -a net.sf.cglib:cglib
 
-%post
-%update_maven_depmap
-
-%postun
-%update_maven_depmap
+cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
 %files
-%defattr(-,root,root,-)
 %doc LICENSE NOTICE
-%{_javadir}/*.jar
-%{_mavenpomdir}/*
-%config(noreplace) %{_mavendepmapfragdir}/%{name}
+%{_javadir}/%{name}.jar
+%{_mavenpomdir}/JPP-%{name}.pom
+%{_mavendepmapfragdir}/%{name}
 
 %files javadoc
-%defattr(-,root,root,-)
-%{_javadocdir}/%{name}-%{version}
+%doc LICENSE NOTICE
+%{_javadocdir}/%{name}
 
 %changelog
-* Tue Aug 14 2012 Severin Gehwolf <sgehwolf@redhat.com> 2.2-11
+* Mon Sep 17 2012 Severin Gehwolf <sgehwolf@redhat.com> 2.2-13
 - Use aqute bnd in order to generate OSGi metadata.
+
+* Fri Aug 17 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-12
+- Add additional depmap
+
+* Thu Aug 16 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-11
+- Fix license tag
+- Install LICENSE and NOTICE with javadoc package
+- Convert versioned JARs to unversioned
+- Preserve timestamp of POM file
+- Update to current packaging guidelines
 
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
