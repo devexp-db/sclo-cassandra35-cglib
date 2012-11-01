@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        2.2
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -58,6 +58,7 @@ cp %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 install -p -m 644 dist/%{name}-%{version}.bar %{buildroot}%{_javadir}/%{name}.jar
 install -p -m 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 %add_maven_depmap -a net.sf.cglib:cglib
+%add_maven_depmap -a cglib:cglib-full
 
 cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
@@ -72,6 +73,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Thu Nov  1 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-14
+- Add additional maven depmap
+
 * Mon Sep 17 2012 Severin Gehwolf <sgehwolf@redhat.com> 2.2-13
 - Use aqute bnd in order to generate OSGi metadata.
 
