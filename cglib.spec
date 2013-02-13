@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        2.2
-Release:        14%{?dist}
+Release:        15%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -73,6 +73,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-15
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Thu Nov  1 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.2-14
 - Add additional maven depmap
 
