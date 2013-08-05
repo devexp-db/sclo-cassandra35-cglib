@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        2.2
-Release:        16%{?dist}
+Release:        17%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -53,7 +53,6 @@ install -d -m 755 %{buildroot}%{_mavenpomdir}
 install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
 mkdir -p %{buildroot}%{_mavenpomdir}
 cp %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_to_maven_depmap net.sf.cglib %{name} %{version} JPP %{name}
 # yes, this is really *.bar - aqute bnd created it
 install -p -m 644 dist/%{name}-%{version}.bar %{buildroot}%{_javadir}/%{name}.jar
 install -p -m 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
@@ -73,6 +72,10 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Mon Aug 05 2013 Severin Gehwolf <sgehwolf@redhat.com> 2.2-17
+- Remove old call to %add_to_maven_depmap macro.
+- Fixes RHBZ#992051.
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
