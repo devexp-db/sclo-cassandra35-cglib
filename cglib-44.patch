@@ -1,0 +1,11 @@
+--- src/proxy/net/sf/cglib/core/DebuggingClassWriter.java~	2012-05-25 13:21:20.000000000 +0200
++++ src/proxy/net/sf/cglib/core/DebuggingClassWriter.java	2013-11-12 10:36:50.707147437 +0100
+@@ -46,7 +46,7 @@
+     }
+     
+     public DebuggingClassWriter(int flags) {
+-	super(flags, new ClassWriter(flags));
++	super(Opcodes.ASM4, new ClassWriter(flags));
+     }
+ 
+     public void visit(int version,

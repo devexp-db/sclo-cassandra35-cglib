@@ -1,6 +1,6 @@
 Name:           cglib
-Version:        2.2
-Release:        17%{?dist}
+Version:        3.0
+Release:        1%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -8,16 +8,17 @@ Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
 Source1:        http://mirrors.ibiblio.org/pub/mirrors/maven2/%{name}/%{name}/%{version}/%{name}-%{version}.pom
 Source2:        bnd.properties
-# Remove the repackaging step that includes other jars into the final thing
-Patch0:         %{name}-build_xml.patch
+# Incorrect usage of ASM library
+# Forwarded upstream: https://sourceforge.net/p/cglib/bugs/44/
+Patch0:         cglib-44.patch
 
 Requires: java >= 0:1.6.0
-Requires: objectweb-asm
+Requires: objectweb-asm4
 
 BuildRequires:  ant
 BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  java-devel >= 0:1.6.0
-BuildRequires:  objectweb-asm
+BuildRequires:  objectweb-asm4
 BuildRequires:  unzip
 BuildRequires:  aqute-bnd
 BuildArch:      noarch
@@ -35,11 +36,16 @@ Documentation for the cglib code generation library.
 
 %prep
 %setup -q -c %{name}-%{version}
+cp -p %{SOURCE1} pom.xml
 rm lib/*.jar
-%patch0 -p1
+# Remove the repackaging step that includes other jars into the final thing
+sed -i "/<taskdef name=.jarjar/,/<.jarjar>/d" build.xml
+
+%patch0
+%pom_xpath_remove "pom:dependency[pom:artifactId = 'asm-util']/pom:optional"
 
 %build
-export CLASSPATH=`build-classpath objectweb-asm`
+export OPT_JAR_LIST=objectweb-asm4
 ant jar javadoc
 # Convert to OSGi bundle
 pushd dist
@@ -52,12 +58,10 @@ install -d -m 755 %{buildroot}%{_javadir}
 install -d -m 755 %{buildroot}%{_mavenpomdir}
 install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
 mkdir -p %{buildroot}%{_mavenpomdir}
-cp %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 # yes, this is really *.bar - aqute bnd created it
 install -p -m 644 dist/%{name}-%{version}.bar %{buildroot}%{_javadir}/%{name}.jar
-install -p -m 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap -a net.sf.cglib:cglib
-%add_maven_depmap -a cglib:cglib-full
+install -p -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
+%add_maven_depmap -a net.sf.cglib:cglib,cglib:cglib-full,org.sonatype.sisu.inject:cglib
 
 cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
@@ -72,6 +76,10 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Mon Nov 11 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0-1
+- Update to upstream version 3.0
+- Add alias for org.sonatype.sisu.inject:cglib
+
 * Mon Aug 05 2013 Severin Gehwolf <sgehwolf@redhat.com> 2.2-17
 - Remove old call to %add_to_maven_depmap macro.
 - Fixes RHBZ#992051.
