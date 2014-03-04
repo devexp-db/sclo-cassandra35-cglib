@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        3.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -9,7 +9,7 @@ Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.
 Source1:        http://mirrors.ibiblio.org/pub/mirrors/maven2/%{name}/%{name}/%{version}/%{name}-%{version}.pom
 Source2:        bnd.properties
 
-Requires: java >= 0:1.6.0
+Requires: java-headless >= 0:1.6.0
 Requires: objectweb-asm
 
 BuildRequires:  ant
@@ -72,6 +72,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 3.1-2
+- Use Requires: java-headless rebuild (#1067528)
+
 * Mon Jan 13 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1-1
 - Update to upstream version 3.1
 - Remove patch for upstream bug 44 (fixed upstream)
