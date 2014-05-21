@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        3.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -61,17 +61,17 @@ install -p -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 
 cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
-%files
+%files -f .mfiles
 %doc LICENSE NOTICE
-%{_javadir}/%{name}.jar
-%{_mavenpomdir}/JPP-%{name}.pom
-%{_mavendepmapfragdir}/%{name}
 
 %files javadoc
 %doc LICENSE NOTICE
 %{_javadocdir}/%{name}
 
 %changelog
+* Wed May 21 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1-3
+- Use .mfiles generated during build
+
 * Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 3.1-2
 - Use Requires: java-headless rebuild (#1067528)
 
