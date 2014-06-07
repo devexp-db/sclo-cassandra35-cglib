@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -69,6 +69,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Wed May 21 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1-3
 - Use .mfiles generated during build
 
