@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        3.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Group:          Development/Tools
@@ -57,7 +57,7 @@ mkdir -p %{buildroot}%{_mavenpomdir}
 # yes, this is really *.bar - aqute bnd created it
 install -p -m 644 dist/%{name}-%{version}.bar %{buildroot}%{_javadir}/%{name}.jar
 install -p -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap -a net.sf.cglib:cglib,cglib:cglib-full,org.sonatype.sisu.inject:cglib
+%add_maven_depmap -a net.sf.cglib:cglib,cglib:cglib-full,cglib:cglib-nodep,org.sonatype.sisu.inject:cglib
 
 cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 
@@ -69,6 +69,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Mon Oct 20 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1-5
+- Add alias for cglib:cglib-nodep
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
