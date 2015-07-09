@@ -1,9 +1,8 @@
 Name:           cglib
 Version:        3.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
-Group:          Development/Tools
 Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
 Source1:        http://mirrors.ibiblio.org/pub/mirrors/maven2/%{name}/%{name}/%{version}/%{name}-%{version}.pom
@@ -21,13 +20,13 @@ BuildRequires:  aqute-bnd
 BuildArch:      noarch
 
 %description
-cglib is a powerful, high performance and quality code generation library 
-for Java. It is used to extend Java classes and implements interfaces 
+cglib is a powerful, high performance and quality code generation library
+for Java. It is used to extend Java classes and implements interfaces
 at runtime.
 
 %package javadoc
 Summary:        Javadoc for %{name}
-Group:          Documentation
+
 %description javadoc
 Documentation for the cglib code generation library.
 
@@ -44,10 +43,8 @@ sed -i "/<taskdef name=.jarjar/,/<.jarjar>/d" build.xml
 export OPT_JAR_LIST=objectweb-asm
 ant jar javadoc
 # Convert to OSGi bundle
-pushd dist
-java -Dcglib.bundle.version="%{version}" \
-  -jar $(build-classpath aqute-bnd) wrap -output %{name}-%{version}.bar -properties %{SOURCE2} %{name}-%{version}.jar
-popd
+bnd wrap --output dist/%{name}-%{version}.bar --properties %{SOURCE2} \
+         --version %{version} dist/%{name}-%{version}.jar
 
 %install
 install -d -m 755 %{buildroot}%{_javadir}
@@ -69,6 +66,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Thu Jul 09 2015 Michael Simacek <msimacek@redhat.com> - 3.1-7
+- Update bnd invocation
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.1-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
