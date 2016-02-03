@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        3.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Url:            http://cglib.sourceforge.net/
@@ -66,6 +66,9 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 %{_javadocdir}/%{name}
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.1-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Thu Jul 09 2015 Michael Simacek <msimacek@redhat.com> - 3.1-7
 - Update bnd invocation
 
