@@ -1,19 +1,15 @@
 Name:           cglib
 Version:        3.1
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Url:            http://cglib.sourceforge.net/
 Source0:        http://downloads.sourceforge.net/%{name}/%{name}-src-%{version}.jar
-Source1:        http://mirrors.ibiblio.org/pub/mirrors/maven2/%{name}/%{name}/%{version}/%{name}-%{version}.pom
+Source1:        https://repo1.maven.org/maven2/cglib/cglib/%{version}/cglib-%{version}.pom
 Source2:        bnd.properties
 
-Requires: java-headless >= 0:1.6.0
-Requires: objectweb-asm
-
 BuildRequires:  ant
-BuildRequires:  jpackage-utils >= 0:1.5
-BuildRequires:  java-devel >= 0:1.6.0
+BuildRequires:  javapackages-local
 BuildRequires:  objectweb-asm
 BuildRequires:  unzip
 BuildRequires:  aqute-bnd
@@ -22,7 +18,7 @@ BuildArch:      noarch
 %description
 cglib is a powerful, high performance and quality code generation library
 for Java. It is used to extend Java classes and implements interfaces
-at runtime.
+at run-time.
 
 %package javadoc
 Summary:        Javadoc for %{name}
@@ -33,39 +29,42 @@ Documentation for the cglib code generation library.
 %prep
 %setup -q -c %{name}-%{version}
 cp -p %{SOURCE1} pom.xml
+
 rm lib/*.jar
+build-jar-repository -s lib objectweb-asm
+
 # Remove the repackaging step that includes other jars into the final thing
 sed -i "/<taskdef name=.jarjar/,/<.jarjar>/d" build.xml
+sed -i '/doctitle/a additionalparam="-Xdoclint:none"' build.xml
 
 %pom_xpath_remove "pom:dependency[pom:artifactId = 'asm-util']/pom:optional"
+%pom_xpath_set "pom:dependency[pom:groupId = 'ant']/pom:groupId" "org.apache.ant"
+
+%mvn_file :cglib cglib
+%mvn_alias :cglib "net.sf.cglib:cglib" "cglib:cglib-full" "cglib:cglib-nodep" "org.sonatype.sisu.inject:cglib"
 
 %build
-export OPT_JAR_LIST=objectweb-asm
 ant jar javadoc
 # Convert to OSGi bundle
-bnd wrap --output dist/%{name}-%{version}.bar --properties %{SOURCE2} \
-         --version %{version} dist/%{name}-%{version}.jar
+bnd wrap --output dist/cglib-%{version}.bar --properties %{SOURCE2} \
+         --version %{version} dist/cglib-%{version}.jar
+
+mv dist/cglib-%{version}.bar dist/cglib-%{version}.jar
+%mvn_artifact pom.xml dist/cglib-%{version}.jar
 
 %install
-install -d -m 755 %{buildroot}%{_javadir}
-install -d -m 755 %{buildroot}%{_mavenpomdir}
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
-mkdir -p %{buildroot}%{_mavenpomdir}
-# yes, this is really *.bar - aqute bnd created it
-install -p -m 644 dist/%{name}-%{version}.bar %{buildroot}%{_javadir}/%{name}.jar
-install -p -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap -a net.sf.cglib:cglib,cglib:cglib-full,cglib:cglib-nodep,org.sonatype.sisu.inject:cglib
-
-cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
+%mvn_install -J docs
 
 %files -f .mfiles
-%doc LICENSE NOTICE
+%license LICENSE NOTICE
 
-%files javadoc
-%doc LICENSE NOTICE
-%{_javadocdir}/%{name}
+%files javadoc -f .mfiles-javadoc
+%license LICENSE NOTICE
 
 %changelog
+* Thu Feb 18 2016 Mat Booth <mat.booth@redhat.com> - 3.1-9
+- Modernise spec file
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.1-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
@@ -96,7 +95,7 @@ cp -rp docs/* %{buildroot}%{_javadocdir}/%{name}
 - Add alias for org.sonatype.sisu.inject:cglib
 
 * Mon Aug 05 2013 Severin Gehwolf <sgehwolf@redhat.com> 2.2-17
-- Remove old call to %add_to_maven_depmap macro.
+- Remove old call to %%add_to_maven_depmap macro.
 - Fixes RHBZ#992051.
 
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.2-16
