@@ -1,6 +1,6 @@
 Name:           cglib
 Version:        3.1
-Release:        9%{?dist}
+Release:        10%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Url:            http://cglib.sourceforge.net/
@@ -31,7 +31,7 @@ Documentation for the cglib code generation library.
 cp -p %{SOURCE1} pom.xml
 
 rm lib/*.jar
-build-jar-repository -s lib objectweb-asm
+build-jar-repository -s lib objectweb-asm ant
 
 # Remove the repackaging step that includes other jars into the final thing
 sed -i "/<taskdef name=.jarjar/,/<.jarjar>/d" build.xml
@@ -62,6 +62,9 @@ mv dist/cglib-%{version}.bar dist/cglib-%{version}.jar
 %license LICENSE NOTICE
 
 %changelog
+* Mon Feb 22 2016 Mat Booth <mat.booth@redhat.com> - 3.1-10
+- Make ant an optional dependency
+
 * Thu Feb 18 2016 Mat Booth <mat.booth@redhat.com> - 3.1-9
 - Modernise spec file
 
