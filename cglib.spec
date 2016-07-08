@@ -2,7 +2,7 @@
 
 Name:           cglib
 Version:        3.2.4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Url:            https://github.com/cglib/cglib
@@ -51,6 +51,8 @@ Documentation for the cglib code generation library.
 %pom_remove_plugin org.apache.maven.plugins:maven-gpg-plugin
 %pom_remove_plugin org.apache.maven.plugins:maven-jarsigner-plugin cglib-sample
 
+%pom_xpath_inject "pom:dependency[pom:artifactId='ant']" "<optional>true</optional>" cglib
+
 %mvn_alias :cglib "net.sf.cglib:cglib" "cglib:cglib-full" "cglib:cglib-nodep" "org.sonatype.sisu.inject:cglib"
 
 %build
@@ -66,6 +68,9 @@ Documentation for the cglib code generation library.
 %license LICENSE NOTICE
 
 %changelog
+* Fri Jul  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.4-2
+- Make ant dependency optional
+
 * Thu Jul 07 2016 Severin Gehwolf <sgehwolf@redhat.com> - 3.2.4-1
 - Upgrade to latest 3.2.4 release.
 - Resolves RHBZ#1352315
