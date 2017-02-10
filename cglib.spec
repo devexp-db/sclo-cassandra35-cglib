@@ -2,7 +2,7 @@
 
 Name:           cglib
 Version:        3.2.4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Url:            https://github.com/cglib/cglib
@@ -68,6 +68,9 @@ Documentation for the cglib code generation library.
 %license LICENSE NOTICE
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.2.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Fri Jul  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.4-2
 - Make ant dependency optional
 
