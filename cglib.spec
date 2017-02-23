@@ -2,7 +2,7 @@
 
 Name:           cglib
 Version:        3.2.4
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Code Generation Library for Java
 License:        ASL 2.0 and BSD
 Url:            https://github.com/cglib/cglib
@@ -50,6 +50,7 @@ Documentation for the cglib code generation library.
                                          </plugin>' cglib
 %pom_remove_plugin org.apache.maven.plugins:maven-gpg-plugin
 %pom_remove_plugin org.apache.maven.plugins:maven-jarsigner-plugin cglib-sample
+%pom_remove_plugin -r :maven-javadoc-plugin
 
 %pom_xpath_inject "pom:dependency[pom:artifactId='ant']" "<optional>true</optional>" cglib
 
@@ -68,6 +69,9 @@ Documentation for the cglib code generation library.
 %license LICENSE NOTICE
 
 %changelog
+* Thu Feb 23 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.4-4
+- Remove unneeded maven-javadoc-plugin invocation
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.2.4-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
