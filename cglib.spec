@@ -1,21 +1,25 @@
+%{?scl:%scl_package cglib}
+%{!?scl:%global pkg_name %{name}}
+
 %global tarball_name RELEASE_3_2_4
 
-Name:           cglib
-Version:        3.2.4
-Release:        4%{?dist}
-Summary:        Code Generation Library for Java
-License:        ASL 2.0 and BSD
-Url:            https://github.com/cglib/cglib
-Source0:        https://github.com/cglib/cglib/archive/%{tarball_name}.tar.gz
+Name:		%{?scl_prefix}cglib
+Version:	3.2.4
+Release:	5%{?dist}
+Summary:	Code Generation Library for Java
+License:	ASL 2.0 and BSD
+Url:		https://github.com/cglib/cglib
+Source0:	https://github.com/%{pkg_name}/%{pkg_name}/archive/%{tarball_name}.tar.gz
 
-BuildRequires:  maven-local
-BuildRequires:  maven-plugin-bundle
-BuildRequires:  javapackages-local
-BuildRequires:  mvn(org.apache.ant:ant)
-BuildRequires:  mvn(org.ow2.asm:asm)
-BuildRequires:  mvn(junit:junit)
-BuildRequires:  mvn(org.sonatype.oss:oss-parent:pom:)
-BuildArch:      noarch
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix_maven}maven-plugin-bundle
+BuildRequires:	%{?scl_prefix_maven}javapackages-local
+BuildRequires:	%{?scl_prefix_java_common}ant
+BuildRequires:	%{?scl_prefix_java_common}objectweb-asm%{?scl:5}
+BuildRequires:	%{?scl_prefix_java_common}junit
+BuildRequires:	%{?scl_prefix_maven}sonatype-oss-parent
+%{?scl:Requires: %scl_runtime}
+BuildArch:	noarch
 
 %description
 cglib is a powerful, high performance and quality code generation library
@@ -23,18 +27,19 @@ for Java. It is used to extend Java classes and implements interfaces
 at run-time.
 
 %package javadoc
-Summary:        Javadoc for %{name}
+Summary:	Javadoc for %{name}
 
 %description javadoc
 Documentation for the cglib code generation library.
 
 %prep
-%setup -q -n %{name}-%{tarball_name}
+%setup -q -n %{pkg_name}-%{tarball_name}
 
-%pom_disable_module cglib-nodep
-%pom_disable_module cglib-integration-test
-%pom_disable_module cglib-jmh
-%pom_xpath_set pom:packaging 'bundle' cglib
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
+%pom_disable_module %{pkg_name}-nodep
+%pom_disable_module %{pkg_name}-integration-test
+%pom_disable_module %{pkg_name}-jmh
+%pom_xpath_set pom:packaging 'bundle' %{pkg_name}
 %pom_xpath_inject pom:build/pom:plugins '<plugin>
                                            <groupId>org.apache.felix</groupId>
                                            <artifactId>maven-bundle-plugin</artifactId>
@@ -42,25 +47,33 @@ Documentation for the cglib code generation library.
                                            <extensions>true</extensions>
                                            <configuration>
                                              <instructions>
-                                               <Bundle-SymbolicName>net.sf.cglib.core</Bundle-SymbolicName>
+                                               <Bundle-SymbolicName>net.sf.%{pkg_name}.core</Bundle-SymbolicName>
                                                <Export-Package>net.*</Export-Package>
                                                <Import-Package>org.apache.tools.*;resolution:=optional,*</Import-Package>
                                              </instructions>
                                            </configuration>
-                                         </plugin>' cglib
+                                         </plugin>' %{pkg_name}
 %pom_remove_plugin org.apache.maven.plugins:maven-gpg-plugin
-%pom_remove_plugin org.apache.maven.plugins:maven-jarsigner-plugin cglib-sample
+%pom_remove_plugin org.apache.maven.plugins:maven-jarsigner-plugin %{pkg_name}-sample
 %pom_remove_plugin -r :maven-javadoc-plugin
 
-%pom_xpath_inject "pom:dependency[pom:artifactId='ant']" "<optional>true</optional>" cglib
+%pom_xpath_inject "pom:dependency[pom:artifactId='ant']" "<optional>true</optional>" %{pkg_name}
 
-%mvn_alias :cglib "net.sf.cglib:cglib" "cglib:cglib-full" "cglib:cglib-nodep" "org.sonatype.sisu.inject:cglib"
+# change objectweb-asm version for scl package
+%{?scl:%pom_change_dep :asm: :asm:5.0.3}
+
+%mvn_alias :%{pkg_name} "net.sf.%{pkg_name}:%{pkg_name}" "%{pkg_name}:%{pkg_name}-full" "%{pkg_name}:%{pkg_name}-nodep" "org.sonatype.sisu.inject:%{pkg_name}"
+%{?scl:EOF}
 
 %build
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_build
+%{?scl:EOF}
 
 %install
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
+%{?scl:EOF}
 
 %files -f .mfiles
 %license LICENSE NOTICE
@@ -69,6 +82,9 @@ Documentation for the cglib code generation library.
 %license LICENSE NOTICE
 
 %changelog
+* Tue Mar 07 2017 Tomas Repik <trepik@redhat.com> - 3.2.4-5
+- scl conversion
+
 * Thu Feb 23 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.4-4
 - Remove unneeded maven-javadoc-plugin invocation
 
